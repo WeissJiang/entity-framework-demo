@@ -1,6 +1,5 @@
-using EFGetStarted;
+using EFGetStarted.Domains;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,16 +10,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+
+
+
+
+
 var connectString = builder.Configuration.GetConnectionString("BloggingContext");
-builder.Services.AddDbContext<BloggingContext>(options =>
-  options.UseSqlServer(connectString);
-
-
-
-
-using var db = new BloggingContext();
 // Note: This sample requires the database to be created before running.
-Console.WriteLine($"Database path: {db.DbPath}.");
+Console.WriteLine($"Database path: {connectString}.");
+builder.Services.AddDbContext<BloggingContext>(options =>
+  options.UseSqlServer(connectString));
+
+
+
 
 
 
@@ -41,7 +44,7 @@ using (var scope = app.Services.CreateScope())
 
     var context = services.GetRequiredService<BloggingContext>();
     context.Database.EnsureCreated();
-     DbInitializer.Initialize(context);
+    DbInitializer.Initialize(context);
 }
 
 app.UseHttpsRedirection();
